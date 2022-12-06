@@ -1,0 +1,25 @@
+ROUTINE Routine1
+Rule()  public {
+    //先頭にタブを入れてからコマンドを書きます
+    write "こんにちは",!
+}
+
+ex1() public {
+    write "戻り値がないルーチンです"
+}
+
+ex2() public {
+    write "こんにちは"
+    return "戻り値が返るルーチンです"
+}
+
+Parameter1(refVal) public {
+    set refVal="新しい値に変更"
+}
+
+valiable(a,b,c...) public {
+  write "a=",a,!
+  write "b=",b,!!
+  write "*** c ***",!!
+  zwrite c
+}
