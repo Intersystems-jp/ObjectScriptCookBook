@@ -7,6 +7,8 @@
 クックブックでご紹介する内容は以下の通りです。
 
 - [文字列操作](#文字列操作)
+- [演算子](#演算子)
+- [数値かどうかの確認](#数値かどうかの確認)
 - [現在日付と時刻の取得](#現在日付と時刻の取得)
 - [日付時刻の変換](#日付の表示変換)
 - [実行時間を計測したい](#実行時間を計測したい)
@@ -36,7 +38,6 @@ set a="今日の天気は"
 set b="晴れ"
 set c=a_b
 write c
-char
 //以下出力結果
 今日の天気は晴れ
 ```
@@ -655,6 +656,104 @@ USER>write $PIECE($HOROLOG,",",2)
 USER>write $PIECE($NOW(),",",2)
 43609.6208618
 ```
+
+## 演算子
+
+その他言語とObjectScriptの演算子早見表です。
+
+--|ObjectScript|C または C++|C#|Visual Basic|Java|Python|JavaScript|GO|Rust
+--|--|--|--|--|--|--|--|--|--
+文字列結合|_|なし|+|+または&|+|+または+=|+|+|+
+Not|'|!|!|Not|!|not|!|!|!
+代入|=|=|=|=|=|=|=|=|=
+比較（一致）|=|==|==|=|==|==|==|==|==
+比較（不一致）|'=|!=|!=|<>|!=|!=|!=|!=|!=
+論理演算（AND）|[&または&&](https://docs.intersystems.com/irisforhealthlatest/csp/docbookj/DocBook.UI.Page.cls?KEY=GCOS_operators#GCOS_operators_binand)|&&|&&|And|&&|and|&&|&&|&&
+論理演算（OR）|[!または&#124;&#124;](https://docs.intersystems.com/irisforhealthlatest/csp/docbookj/DocBook.UI.Page.cls?KEY=GCOS_operators#GCOS_operators_binor)|&#124;&#124;|&#124;&#124;|Or|&#124;&#124;|or|&#124;&#124;|&#124;&#124;|&#124;&#124;
+加,減,乗,除|+,-,*,/|+,-,*,/|+,-,*,/|+,-,*,/|+,-,*,/|+,-,*,/|+,-,*,/|+,-,*,/|+,-,*,/
+剰余|#|%|%|Mod|%|%|%|%|%
+整数除算|`\`|/|/|`\`|/|//|なし|/|/
+インクリメント|なし|変数++／++変数|変数++／++変数|なし|変数++／++変数|なし|変数++／++変数|変数++／++変数|なし
+デクリメント|なし|変数--／--変数|変数--／--変数|なし|変数--／--変数|なし|変数--／--変数|変数--／--変数|なし
+
+※ ObjectScriptの演算子について詳細はドキュメント：[演算子と式](https://docs.intersystems.com/irisforhealthlatest/csp/docbookj/DocBook.UI.Page.cls?KEY=GCOS_operators)をご参照ください。
+
+
+### - 演算子の優先順位：**注意点**
+
+ObjectScriptは、**必ず左から右に実行されます。**
+
+
+
+```
+USER>write 3+4*5
+35
+USER>write 3+(4*5)
+23
+USER>
+```
+
+通常の計算では **3+4\*5 は掛け算の 4*5 が先に計算され 3 が加算される**はずですが、ObjectScript は、**必ず左から右に実行されるため 3+4 の結果に 5 を掛けるため結果は 35 となります。**
+
+明示的に **()** を使用して優先度を指定することで通常の計算と同じ結果を得ることができますので、()の指定を忘れないようにご注意ください
+
+
+### - 計算時の注意点
+
+ObjectScriptでは、+ の演算子を変数や文字列前に付与することで、数値として解釈します。
+
+```
+USER>set a="5個"  //(1)
+ 
+USER>write a
+5個
+USER>write +a
+5
+USER>set b="みかん3個"  //(2)
+ 
+USER>write b
+みかん3個
+USER>write +b
+0
+```
+
+例えば、上記実行例にあるように文字列が含まれる変数(1)と(2)の足し算を実行してもエラーは発生しません。これは、+ の演算子により、文字列を数値として変換し計算するためです。
+
+```
+USER>write a+b
+5
+USER>write a
+5個
+USER>write b
+みかん3個
+USER>write a+b
+5
+```
+> ご参考：[単項プラス演算子 (+)](https://docs.intersystems.com/irisforhealthlatest/csp/docbookj/DocBook.UI.Page.cls?KEY=GCOS_operators#GCOS_operators_unpos) 
+
+**上記例のような処理は、わかりにくく紛らわしい記述となりバグ発生の原因にもなりますのでご注意ください。**
+
+計算時、事前に数値であるかどうか確認する方法もあります。詳細は[数値かどうかの確認](#数値かどうかの確認)をご参照ください。
+
+
+## 数値かどうかの確認
+
+[$NUMBER()](https://docs.intersystems.com/irisforhealthlatest/csp/docbookj/DocBook.UI.Page.cls?KEY=RCOS_fnumber)関数を使用することで、数値であるかどうか確認できます。
+
+```
+USER>set p1=5
+ 
+USER>set p2="5個"
+
+USER>write $number(p1)
+5
+USER>write $number(p2)
+ 
+USER>
+```
+$NUMBER()は引数に数値以外のものが指定されると空("")を返します。
+
+
 
 ## 日付の表示変換
 

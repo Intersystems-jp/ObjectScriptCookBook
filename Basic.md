@@ -18,6 +18,9 @@ ObjectScriptは、InterSystems全製品（Cache／Ensemble／HealthShare／Inter
 もし、疑問が解消できなかった場合は、[開発者コミュニティ](https://jp.community.intersystems.com)へぜひご質問ください！いただいた質問の回答は、[ObjectScript クックブック](CookBook.md) に追加させていただきます！
 
 - [1. Hello Worldの出力](#1-hello-worldの出力)
+    - [1-1) ターミナルを利用したObjectScriptの実行](#1-1-ターミナルを利用したobjectscriptの実行)
+    - [1-2) ターミナルの起動方法](#1-2-ターミナルの起動方法)
+    - [1-3) Hello World の出力](#1-3-hello-world-の出力)
 - [2. ObjectScriptの記述方法](#2-objectscriptの記述ルール)
     - [2-1) ターミナルでのコマンドの書き方](#2-1-ターミナルでのコマンドの書き方)
     - [2-2) ルーチンやメソッドに記述する場合のルール](#2-2-ルーチンやメソッドに記述する場合のルール)
@@ -44,10 +47,47 @@ ObjectScriptは、InterSystems全製品（Cache／Ensemble／HealthShare／Inter
     - [7-2) ダイナミックSQL](#7-2-ダイナミックsql)
 
 
-
 ___
 
 ## 1. Hello Worldの出力
+
+### 1-1) ターミナルを利用したObjectScriptの実行
+
+ターミナルはObjectScriptのインタラクティブな実行環境であり、Hello World の出力も含め、プログラミング、デバッグ、運用関連のコマンドを実行する際使用します。
+
+### 1-2) ターミナルの起動方法
+
+WindowsにInterSystems製品をインストールした場合は、タスクバー上に表示されたInterSystems製品のランチャーをクリックし「ターミナル」から起動します。
+
+Windows以外にInterSystems製品をインストールした場合は、以下の iris または csession コマンドを利用して起動します。
+
+なお、**コマンドの最後に指定している引数は、インストール時に設定する構成名（またはインスタンス名）** です。例では、インストール時のデフォルト名を指定していますので、環境に合わせて適宜ご変更ください。
+
+インストール時に設定した構成名（インスタンス名）が不明な場合は、以下のコマンドで確認できます。
+
+製品|コマンド
+--|--
+IRIS または IRIS for Helath | iris list
+Caché または Ensemble| ccontrol list
+
+Windows以外にInterSystems製品をインストールした場合のターミナルログイン時に使用するコマンドは以下の通りです。
+
+製品|コマンド
+--|--
+IRIS | iris session IRIS
+IRIS for Health | iris session IRISHealth
+コンテナ|iris session IRIS
+Caché| csession CACHE
+Ensemble | csession ENSEMBLE
+
+ターミナルを起動するとプロンプトに `USER>` と表示されますが、接続している仮想の作業環境名である「ネームスペース」の名称が表示されます。
+
+> 「ネームスペース」について詳しくは、ビデオ：[【はじめての InterSystems IRIS】セルフラーニングビデオ：基本その2：InterSystems IRIS で開発をはじめよう！](https://jp.community.intersystems.com/node/478601) の 7分～ご紹介しています。
+
+USERネームスペースはインストール時に作成されるネームスペースで、ターミナル起動時のデフォルトネームスペースに設定されています。
+
+
+### 1-3) Hello World の出力
 
 Hello World と出力したい場合、WRITEコマンドを利用します。
 
@@ -206,6 +246,9 @@ ObjectScriptには、**ローカル変数** と **グローバル変数** の2�
 どちらの変数も操作方法は同じです。
 
 また、ObjectScriptの変数は、型がない（動的で弱い型）ため、変数タイプを宣言する必要がありません。
+
+型の概念はありませんが、内部的には数字か文字か、を認識しているため、計算時に注意が必要です。
+詳細は、[ObjectScriptクックブック](/CookBook.md)の[演算子の優先順位：注意点](/CookBook.md#--演算子の優先順位注意点)をご参照ください。
 
 ### 3-1) 配列変数の作成
 
