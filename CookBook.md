@@ -738,20 +738,20 @@ USER>write a+b
 
 ## 数値かどうかの確認
 
-[$NUMBER()](https://docs.intersystems.com/irisforhealthlatest/csp/docbookj/DocBook.UI.Page.cls?KEY=RCOS_fnumber)関数を使用することで、数値であるかどうか確認できます。
+[$ISVALIDNUM()](https://docs.intersystems.com/irisforhealthlatest/csp/docbookj/DocBook.UI.Page.cls?KEY=RCOS_fisvalidnum)関数を使用することで、数値であるかどうか確認できます。
 
 ```
 USER>set p1=5
  
 USER>set p2="5個"
 
-USER>write $number(p1)
-5
-USER>write $number(p2)
- 
+USER>write $ISVALIDNUM(p1)
+1
+USER>write $ISVALIDNUM(p2)
+0
 USER>
 ```
-$NUMBER()は引数に数値以外のものが指定されると空("")を返します。
+$ISVALIDNUM()は引数に数値以外のものが指定されると 0 を返します。
 
 
 
