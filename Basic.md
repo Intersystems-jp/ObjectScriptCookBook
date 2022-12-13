@@ -535,7 +535,7 @@ KILLコマンドで配列を削除する場合、変数名の消去で全配列�
 
 ## 4. コマンド
 
-ObjectScriptのコマンドは大文字小文字を区別しません。[省略系](https://docs.intersystems.com/irisforhealthlatest/csp/docbookj/DocBook.UI.Page.cls?KEY=RCOS_abbreviations)もありますが、例ではフルスペルでご紹介します。
+ObjectScriptのコマンドは大文字小文字を区別しません。[省略形](https://docs.intersystems.com/irisforhealthlatest/csp/docbookj/DocBook.UI.Page.cls?KEY=RCOS_abbreviations)もありますが、例ではフルスペルでご紹介します。
 
 ### 4-1) メソッドやルーチンを実行する場合に使用するコマンド
 
