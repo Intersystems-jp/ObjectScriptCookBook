@@ -8,7 +8,7 @@
 
 - [文字列操作](#文字列操作)
 - [演算子](#演算子)
-- [数値かどうかの確認](#数値かどうかの確認)
+- [注意点](#注意点)
 - [現在日付と時刻の取得](#現在日付と時刻の取得)
 - [日付時刻の変換](#日付の表示変換)
 - [実行時間を計測したい](#実行時間を計測したい)
@@ -679,10 +679,11 @@ Not|'|!|!|Not|!|not|!|!|!
 ※ ObjectScriptの演算子について詳細はドキュメント：[演算子と式](https://docs.intersystems.com/irisforhealthlatest/csp/docbookj/DocBook.UI.Page.cls?KEY=GCOS_operators)をご参照ください。
 
 
-### - 演算子の優先順位：**注意点**
+## 注意点
+
+### - 演算子の優先順位
 
 ObjectScriptは、**必ず左から右に実行されます。**
-
 
 
 ```
@@ -698,62 +699,59 @@ USER>
 明示的に **()** を使用して優先度を指定することで通常の計算と同じ結果を得ることができますので、()の指定を忘れないようにご注意ください
 
 
-### - 計算時の注意点
+### - 数値と数字の扱い
 
-ObjectScriptでは、+ の演算子を変数や文字列前に付与することで、数値として解釈します。
+すべて数字で構成される数値文字列 `"123"` は、**数値**として解釈されます。
+>詳細はドキュメントの「[数値文字列](https://docs.intersystems.com/irisforhealthlatest/csp/docbookj/DocBook.UI.Page.cls?KEY=GCOS_operators#GCOS_operators_str2num_numstrings)」も併せてご参照ください。
+
+ObjectScriptでは、数に対する数値演算をすべて[キャノニック形式](https://docs.intersystems.com/irisforhealthlatest/csp/docbookj/DocBook.UI.Page.cls?KEY=GCOS_types#GCOS_types_numcanonical)で実行するため、`123.0` は、数値演算を行うときに末尾の 0 が削除され `123` として解釈されます。
 
 ```
-USER>set a="5個"  //(1)
+USER>if "123"=123 {write "SAME"}  //"123" は数値として解釈され一致するため「SAME」と表示されます
+SAME
+USER>if "123.0"=123.0 {write "SAME"} // "123.0"は文字として解釈され、123.0は123と解釈され一致しません
  
-USER>write a
-5個
-USER>write +a
-5
-USER>set b="みかん3個"  //(2)
+USER>if "123.0"=123 {write "SAME"}  // "123.0"は文字として解釈されるため一致しません
  
-USER>write b
-みかん3個
-USER>write +b
-0
+USER>
 ```
 
-例えば、上記実行例にあるように文字列が含まれる変数(1)と(2)の足し算を実行してもエラーは発生しません。これは、+ の演算子により、文字列を数値として変換し計算するためです。
+CSVファイル入力時に取得した値や、区切りマーク付き文字列の部分抽出で取得した値と数値の比較を行う場合、注意が必要です。
 
 ```
-USER>write a+b
-5
-USER>write a
-5個
-USER>write b
-みかん3個
-USER>write a+b
-5
+USER>set value=100*1.08  // 108
+ 
+USER>set record="108.0,100,20"
+ 
+USER>set col1=$PIECE(record,",",1)  // 108.0
+ 
+USER>if col1=value { write "SAME" }  //　★
+
+USER>
+```
+
+変数 col1 には、文字列として `108.0` が設定されるため、★ のWRITE文は実行されません。
+
+ObjectScriptでは、+ の演算子を変数や文字列前に付与することで数値として解釈することができるので、以下のように記述することで数値としての比較が行えます。
+
+```
+USER>if +col1=value { write "SAME" }
+SAME
+USER>
 ```
 > ご参考：[単項プラス演算子 (+)](https://docs.intersystems.com/irisforhealthlatest/csp/docbookj/DocBook.UI.Page.cls?KEY=GCOS_operators#GCOS_operators_unpos) 
 
-**上記例のような処理は、わかりにくく紛らわしい記述となりバグ発生の原因にもなりますのでご注意ください。**
-
-計算時、事前に数値であるかどうか確認する方法もあります。詳細は[数値かどうかの確認](#数値かどうかの確認)をご参照ください。
-
-
-## 数値かどうかの確認
-
-[$ISVALIDNUM()](https://docs.intersystems.com/irisforhealthlatest/csp/docbookj/DocBook.UI.Page.cls?KEY=RCOS_fisvalidnum)関数を使用することで、数値であるかどうか確認できます。
+\+ の演算子の他に [$NUMBER()](https://docs.intersystems.com/irisforhealthlatest/csp/docbookj/DocBook.UI.Page.cls?KEY=RCOS_fnumber)関数を使用して数値を検証することもできます。
 
 ```
-USER>set p1=5
+USER>write col1
+108.0
+USER>write $NUMBER(col1)
+108
+USER>write $NUMBER("108.0円")   //数値ではない場合 空("") を返します
  
-USER>set p2="5個"
-
-USER>write $ISVALIDNUM(p1)
-1
-USER>write $ISVALIDNUM(p2)
-0
 USER>
 ```
-$ISVALIDNUM()は引数に数値以外のものが指定されると 0 を返します。
-
-
 
 ## 日付の表示変換
 
