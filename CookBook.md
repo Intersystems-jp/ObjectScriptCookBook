@@ -7,6 +7,8 @@
 クックブックでご紹介する内容は以下の通りです。
 
 - [文字列操作](#文字列操作)
+- [演算子](#演算子)
+- [注意点](#注意点)
 - [現在日付と時刻の取得](#現在日付と時刻の取得)
 - [日付時刻の変換](#日付の表示変換)
 - [実行時間を計測したい](#実行時間を計測したい)
@@ -36,7 +38,6 @@ set a="今日の天気は"
 set b="晴れ"
 set c=a_b
 write c
-char
 //以下出力結果
 今日の天気は晴れ
 ```
@@ -654,6 +655,102 @@ USER>write $PIECE($HOROLOG,",",2)
 43606
 USER>write $PIECE($NOW(),",",2)
 43609.6208618
+```
+
+## 演算子
+
+その他言語とObjectScriptの演算子早見表です。
+
+--|ObjectScript|C または C++|C#|Visual Basic|Java|Python|JavaScript|GO|Rust
+--|--|--|--|--|--|--|--|--|--
+文字列結合|_|なし|+|+または&|+|+または+=|+|+|+
+Not|'|!|!|Not|!|not|!|!|!
+代入|=|=|=|=|=|=|=|=|=
+比較（一致）|=|==|==|=|==|==|==|==|==
+比較（不一致）|'=|!=|!=|<>|!=|!=|!=|!=|!=
+論理演算（AND）|[&または&&](https://docs.intersystems.com/irisforhealthlatest/csp/docbookj/DocBook.UI.Page.cls?KEY=GCOS_operators#GCOS_operators_binand)|&&|&&|And|&&|and|&&|&&|&&
+論理演算（OR）|[!または&#124;&#124;](https://docs.intersystems.com/irisforhealthlatest/csp/docbookj/DocBook.UI.Page.cls?KEY=GCOS_operators#GCOS_operators_binor)|&#124;&#124;|&#124;&#124;|Or|&#124;&#124;|or|&#124;&#124;|&#124;&#124;|&#124;&#124;
+加,減,乗,除|+,-,*,/|+,-,*,/|+,-,*,/|+,-,*,/|+,-,*,/|+,-,*,/|+,-,*,/|+,-,*,/|+,-,*,/
+剰余|#|%|%|Mod|%|%|%|%|%
+整数除算|`\`|/|/|`\`|/|//|なし|/|/
+インクリメント|なし|変数++／++変数|変数++／++変数|なし|変数++／++変数|なし|変数++／++変数|変数++／++変数|なし
+デクリメント|なし|変数--／--変数|変数--／--変数|なし|変数--／--変数|なし|変数--／--変数|変数--／--変数|なし
+
+※ ObjectScriptの演算子について詳細はドキュメント：[演算子と式](https://docs.intersystems.com/irisforhealthlatest/csp/docbookj/DocBook.UI.Page.cls?KEY=GCOS_operators)をご参照ください。
+
+
+## 注意点
+
+### - 演算子の優先順位
+
+ObjectScriptは、**必ず左から右に実行されます。**
+
+
+```
+USER>write 3+4*5
+35
+USER>write 3+(4*5)
+23
+USER>
+```
+
+通常の計算では **3+4\*5 は掛け算の 4*5 が先に計算され 3 が加算される**はずですが、ObjectScript は、**必ず左から右に実行されるため 3+4 の結果に 5 を掛けるため結果は 35 となります。**
+
+明示的に **()** を使用して優先度を指定することで通常の計算と同じ結果を得ることができますので、()の指定を忘れないようにご注意ください
+
+
+### - 数値と数字の扱い
+
+すべて数字で構成される数値文字列 `"123"` は、**数値**として解釈されます。
+>詳細はドキュメントの「[数値文字列](https://docs.intersystems.com/irisforhealthlatest/csp/docbookj/DocBook.UI.Page.cls?KEY=GCOS_operators#GCOS_operators_str2num_numstrings)」も併せてご参照ください。
+
+ObjectScriptでは、数に対する数値演算をすべて[キャノニック形式](https://docs.intersystems.com/irisforhealthlatest/csp/docbookj/DocBook.UI.Page.cls?KEY=GCOS_types#GCOS_types_numcanonical)で実行するため、`123.0` は、数値演算を行うときに末尾の 0 が削除され `123` として解釈されます。
+
+```
+USER>if "123"=123 {write "SAME"}  //"123" は数値として解釈され一致するため「SAME」と表示されます
+SAME
+USER>if "123.0"=123.0 {write "SAME"} // "123.0"は文字として解釈され、123.0は123と解釈され一致しません
+ 
+USER>if "123.0"=123 {write "SAME"}  // "123.0"は文字として解釈されるため一致しません
+ 
+USER>
+```
+
+CSVファイル入力時に取得した値や、区切りマーク付き文字列の部分抽出で取得した値と数値の比較を行う場合、注意が必要です。
+
+```
+USER>set value=100*1.08  // 108
+ 
+USER>set record="108.0,100,20"
+ 
+USER>set col1=$PIECE(record,",",1)  // 108.0
+ 
+USER>if col1=value { write "SAME" }  //　★
+
+USER>
+```
+
+変数 col1 には、文字列として `108.0` が設定されるため、★ のWRITE文は実行されません。
+
+ObjectScriptでは、+ の演算子を変数や文字列前に付与することで数値として解釈することができるので、以下のように記述することで数値としての比較が行えます。
+
+```
+USER>if +col1=value { write "SAME" }
+SAME
+USER>
+```
+> ご参考：[単項プラス演算子 (+)](https://docs.intersystems.com/irisforhealthlatest/csp/docbookj/DocBook.UI.Page.cls?KEY=GCOS_operators#GCOS_operators_unpos) 
+
+\+ の演算子の他に [$NUMBER()](https://docs.intersystems.com/irisforhealthlatest/csp/docbookj/DocBook.UI.Page.cls?KEY=RCOS_fnumber)関数を使用して数値を検証することもできます。
+
+```
+USER>write col1
+108.0
+USER>write $NUMBER(col1)
+108
+USER>write $NUMBER("108.0円")   //数値ではない場合 空("") を返します
+ 
+USER>
 ```
 
 ## 日付の表示変換
