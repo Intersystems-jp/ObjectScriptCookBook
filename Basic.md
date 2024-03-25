@@ -45,7 +45,7 @@ ObjectScriptは、InterSystems全製品（Cache／Ensemble／HealthShare／Inter
 - [7. メソッドやルーチンでSQLを実行する方法](#7-メソッドやルーチンでsqlを実行する方法)
     - [7-1) 埋め込みSQL](#7-1-埋め込みsql)
     - [7-2) ダイナミックSQL](#7-2-ダイナミックsql)
-- [8. デバッグ方法]
+- [8. デバッグ方法](#8-デバッグ方法)
 
 
 ___
