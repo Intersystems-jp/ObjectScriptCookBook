@@ -705,3 +705,50 @@ Codeプロパティ|エラーコードを取得できます。|
 Locationプロパティ|エラー発生場所を取得できます。|
 Dataプロパティ|例外に追加情報がある場合取得できます。|
 %ClassName(1)|例外のクラス名のフルネームを取得できます（$CLASSNAME(例外)メソッドを使用しても取得できます）。|
+
+- 例外オブジェクトに含まれるメソッドやプロパティの出力例
+
+    サンプル：[CookBook.Class1](/CookBook/Class1.cls#142)のErrorTest()メソッド
+
+    ```
+    ClassMethod ErrorTest()
+    {
+        #dim ex As %Exception.AbstractException
+        try {
+            set result=121/0
+            write result,!
+        }
+        catch ex {
+            write !,"****メソッドの出力例****",!
+            write "DisplayString()の出力    :",ex.DisplayString(),!
+            write "AsSQLCODE()の出力  :",ex.AsSQLCODE(),!
+            write "AsSQLMessage()の出力   :",ex.AsSQLMessage(),!
+            write "例外クラス名 :",ex.%ClassName(1),!
+
+            write !,"****プロパティの出力例****",!
+            write "Name :",ex.Name,!
+            write "Code :",ex.Code,!
+            write "Location :",ex.Location,!
+            write "Data :",ex.Data,!
+        }
+    }
+    ```
+
+    実行結果
+    ```
+    USER>do ##class(CookBook.Class1).ErrorTest()
+    
+    ****メソッドの出力例****
+    DisplayString()の出力    :<DIVIDE> 18 ErrorTest+2^CookBook.Class1.1
+    AsSQLCODE()の出力  :-400
+    AsSQLMessage()の出力   :エラー #5002: ObjectScript エラー:<DIVIDE>ErrorTest+2^Co         okBook.Class1.1
+    例外クラス名 :%Exception.SystemException
+    
+    ****プロパティの出力例****
+    Name :<DIVIDE>
+    Code :18
+    Location :ErrorTest+2^CookBook.Class1.1
+    Data :
+    
+    USER>
+    ```

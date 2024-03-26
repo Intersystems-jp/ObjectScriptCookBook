@@ -139,6 +139,28 @@ ClassMethod INSERT1(name As %String, birthday As %String)
     }
 }
 
+ClassMethod ErrorTest()
+{
+    #dim ex As %Exception.AbstractException
+    try {
+        set result=121/0
+        write result,!
+    }
+    catch ex {
+        write !,"****メソッドの出力例****",!
+        write "DisplayString()の出力    :",ex.DisplayString(),!
+        write "AsSQLCODE()の出力  :",ex.AsSQLCODE(),!
+        write "AsSQLMessage()の出力   :",ex.AsSQLMessage(),!
+        write "例外クラス名 :",ex.%ClassName(1),!
+        
+        write !,"****プロパティの出力例****",!
+        write "Name :",ex.Name,!
+        write "Code :",ex.Code,!
+        write "Location :",ex.Location,!
+        write "Data :",ex.Data,!
+    }
+}
+
 ClassMethod SELECT0()
 {
     &SQL(SELECT Birthday INTO :birthday FROM CookBook.Person WHERE ID=1)
