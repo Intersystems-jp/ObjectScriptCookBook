@@ -708,7 +708,7 @@ Dataプロパティ|例外に追加情報がある場合取得できます。|
 
 - 例外オブジェクトに含まれるメソッドやプロパティの出力例
 
-    サンプル：[CookBook.Class1](/CookBook/Class1.cls#142)のErrorTest()メソッド
+    サンプル：[CookBook.Class1](/CookBook/Class1.cls#L142)のErrorTest()メソッド
 
     ```
     ClassMethod ErrorTest()
