@@ -8,7 +8,7 @@
 - [エラーメッセージの読み方](#エラーメッセージの読み方)
 - [TRY-CATCHブロックの書き方](#try-catchブロックの書き方)
 - [例外の種類](#例外の種類)
-- [例外に用意されているメソッド紹介](#例外に用意されている共通メソッド紹介)
+- [例外に用意されている共通メソッド／プロパティ紹介](#例外に用意されている共通メソッドプロパティ紹介)
 
 
 ## ObjectScriptのエラー
@@ -255,6 +255,8 @@ USER>
     
     USER>
     ```
+    
+    > メモ：(3) の実行で使用しているDisplayString()メソッドの他に、例外オブジェクトのプロパティを利用してエラー情報を取得したり、メソッドを使用して例外から別のタイプ（エラーステータスやSQLコード）に情報を変更することができます。詳細は、[「例外に用意されている共通メソッド／プロパティ紹介」](#例外に用意されている共通メソッド／プロパティ紹介)をご参照ください。
 
 2. CATCHブロックでTHROWを実行した場合
 
@@ -685,7 +687,7 @@ USER>
 この他には[ドキュメント:システムにより提供されるマクロのリファレンス](https://docs.intersystems.com/irisforhealthlatest/csp/docbookj/DocBook.UI.Page.cls?KEY=GCOS_macros#GCOS_macros_syssuppliedlist)をご参照ください。
 
 
-## 例外に用意されている共通メソッド紹介
+## 例外に用意されている共通メソッド／プロパティ紹介
 
 全例外は、[%Exception.AbstractException](https://docs.intersystems.com/irisforhealthlatest/csp/documatic/%25CSP.Documatic.cls?LIBRARY=%25SYS&CLASSNAME=%25Exception.AbstractException)クラスのサブクラスです。
 
