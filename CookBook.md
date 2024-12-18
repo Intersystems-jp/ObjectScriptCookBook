@@ -2021,38 +2021,107 @@ USER>write req.EntityBody.Read()
 {"Test":"これはテストです","Status":"OK"}
 ```
 
+以下の例は、**Teamsワークフローアプリ**に通知するPOST要求時の例で
+す。
+
+アプリ作成方法について、[マイクロソフトのドキュメント](https://support.microsoft.com/ja-jp/office/create-incoming-webhooks-with-workflows-for-microsoft-teams-8ae491c7-0394-4861-ba59-055e33f75498)をご参照ください。
+
+> **2024/12/18追記：Incoming Webhookは2024年12月末で廃止となる為、Teamsワークフローアプリの利用方法に変更しています。 参考情報：[Microsoft Teams 内の Office 365 コネクタの廃止(Incoming Webhookの移行)](https://qiita.com/tomoyasasaki1204/items/48ea14c442ea80171daa)**
+
+下記例の、Server プロパティ、Location プロパティ、クエリパラメータには、Teamsワークフローアプリ作成時に自動生成される情報を指定しています。
+
+送信時のBodyに指定しているJSON文字列は以下の通りです（例では、/data/a.jsonの中身として利用しています）
+```
+{
+    "type":"message",
+    "attachments":[
+        {
+            "contentType":"application/vnd.microsoft.card.adaptive",
+            "contentUrl":null,
+            "content": {
+            "$schema":"http://adaptivecards.io/schemas/adaptive-card.json",
+            "type":"AdaptiveCard",
+            "version":"1.4",
+            "body":[
+                {
+                    "type": "TextBlock",
+                    "text":"こんにちは！"
+                }
+            ]
+        }
+        }
+    ]
+}
+```
+コード例は以下の通りです。
+```
+set req=##class(%Net.HttpRequest).%New()
+set req.Server="abc.xyz.logic.azure.com"
+set req.Location="/workflows/12345679090aaaxx/triggers/manual/paths/invoke"
+set req.SSLConfiguration="webapi"
+set req.Https=1
+set req.ContentType="application/json"
+set req.ContentCharset="utf-8"
+
+//クエリパラメータ設定
+do req.SetParam("api-version","2016-06-01")
+do req.SetParam("sp","/triggers/manual/run")
+do req.SetParam("sv","1.0")
+do req.SetParam("sig","testtesttesttesttesttest")
+
+//表示に使うJSON例がファイルにあるのでそれをロード
+set json={}.%FromJSONFile("/data/a.json")
+// HTTP要求のBodyにJSON文字列をセット
+do json.%ToJSON(req.EntityBody)
+// POST要求実行
+set st=req.Post()
+
+//ステータスコード確認
+write req.HttpResponse.StatusCode,!
+
+//エラー時はエラー情報確認
+write req.HttpResponse.Data.Read()
+```
+上記実行の結果、以下のようなメッセージが通知されます。
+
+![](/images/TeamsWorkFlowApp.png)
+
+
+<details><summary>古い方法：Incoming Webhoook</summary>
+
 以下の例は、Teamsの [Incoming Webhook](https://learn.microsoft.com/ja-jp/microsoftteams/platform/webhooks-and-connectors/how-to/add-incoming-webhook) に通知するPOST要求送信時の例です。
+
 
 Webhook作成方法については、[マイクロソフトのドキュメント](https://learn.microsoft.com/ja-jp/microsoftteams/platform/webhooks-and-connectors/how-to/add-incoming-webhook)をご参照ください
 
 > 以下例の Serverプロパティと Locationプロパティには、Incoming Webhook作成時に自動生成されるURLを指定します。
 
 ```
-    set req=##class(%Net.HttpRequest).%New()
-    set req.Server="xxx.webhook.office.com"
-    set req.Location="incoming webhook作成時に生成されるURLのパスを指定"
-    set req.SSLConfiguration="webapi"
-    set req.Https=1
-    set req.ContentType="application/json"
-    set req.ContentCharset="utf-8"
-    //以下Teamsに送信するメッセージ作成（JSONオブジェクトのtextプロパティにマークダウンで書いたメッセージを送信できます）
-    set json={}
-    set message="#★Incoming Webhookのテスト★"
-    set message=message_$CHAR(13,10)_"**メッセージ送信しました**"
-    set json.text=message
-    //BODY に作成したJSONを設定
-    do json.%ToJSON(req.EntityBody)
-    //POST要求送信
-    set st=req.Post()
-    //HTTPステータスコード確認
-    write req.HttpResponse.StatusCode,!
-    //エラーがない時は空を出力
-    write $SYSTEM.Status.GetErrorText(st)
+set req=##class(%Net.HttpRequest).%New()
+set req.Server="xxx.webhook.office.com"
+set req.Location="incoming webhook作成時に生成されるURLのパスを指定"
+set req.SSLConfiguration="webapi"
+set req.Https=1
+set req.ContentType="application/json"
+set req.ContentCharset="utf-8"
+//以下Teamsに送信するメッセージ作成（JSONオブジェクトのtextプロパティにマークダウンで書いたメッセージを送信できます）
+set json={}
+set message="#★Incoming Webhookのテスト★"
+set message=message_$CHAR(13,10)_"**メッセージ送信しました**"
+set json.text=message
+//BODY に作成したJSONを設定
+do json.%ToJSON(req.EntityBody)
+//POST要求送信
+set st=req.Post()
+//HTTPステータスコード確認
+write req.HttpResponse.StatusCode,!
+//エラーがない時は空を出力
+write $SYSTEM.Status.GetErrorText(st)
 ```
 上記実行の結果、以下のようなメッセージが通知されます。
 
 ![](/images/IncomingWebhookSample.png)
-
+</details>
 
 ## HTTP要求時の認証の指定
 
