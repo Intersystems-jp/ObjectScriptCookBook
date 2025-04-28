@@ -541,12 +541,12 @@ InterSystems 製品に対する入出力時のデフォルトエンコードに�
 
 指定文字列が UTF8 である場合、UTF8 から Unicode に変換する場合の例文は以下の通りです（第2引数に "I" を指定します）。
 ```
-set utf8moji=$ZCONVERT(＜元の文字列＞,"I","UTF8")
+set utf8moji=$ZCONVERT(＜指定文字列＞,"I","UTF8")
 ```
 
 指定文字列に対して、Unicode から UTF8 に変換をかけたい場合の例文は以下の通りです（第2引数に "O" を指定します）。
 ```
-set sjismoji=$ZCONVERT(＜元の文字列＞,"O","UTF8")
+set sjismoji=$ZCONVERT(＜指定文字列＞,"O","UTF8")
 ```
 
 第3引数に指定する InterSystems 製品の文字コードとして指定できる文字列一覧については、以下の方法で確認できます。
