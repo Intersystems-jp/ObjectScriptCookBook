@@ -527,6 +527,39 @@ USER>write $ZCONVERT("コンテナ版irisのコンテナにrootユーザでロ�
 %E3%82%B3%E3%83%B3%E3%83%86%E3%83%8A%E7%89%88iris%E3%81%AE%E3%82%B3%E3%83%B3%E3%83%86%E3%83%8A%E3%81%ABroot%E3%83%A6%E3%83%BC%E3%82%B6%E3%81%A7%E3%83%AD%E3%82%B0%E3%82%A4%E3%83%B3%E3%81%99%E3%82%8B%E6%96%B9%E6%B3%95   
 ```
 
+## - 指定の文字コードに文字列を変換したい
+
+[$ZCONVERT()関数：3 つの引数形式 ： エンコード変換](https://docs.intersystems.com/irisforhealth20241/csp/docbookj/DocBook.UI.Page.cls?KEY=RCOS_fzconvert#RCOS_fzconvert_io)を利用します。
+
+入力データに対しての変換も出力データに対する変換も第2引数を使用することで指定できます。
+
+- 第1引数の文字列を指定エンコードで入力したい場合は、第2引数に "I" を指定します。
+- 第1引数の文字列を指定エンコードに出力したい場合は、第2引数に "O" を指定します。
+
+どの文字コードに変換したいかについては、第3引数に InterSystems 製品の文字コード用文字列で指定します。
+
+指定できるコード一覧は、以下の方法で確認できます。
+
+```
+USER>set nlsoref=##class(%SYS.NLS.Locale).%New()
+
+USER>write $LISTTOSTRING(nlsoref.XLTTables,",")
+Unicode,RAW,BIN,SAME,UTF8,UnicodeLittle,UnicodeBig,URL,JS,JSML,JSON,JSONML,HTML,XML,XMLA,XMLC,EBCDIC,EUC,JIS,JIS2004,NECJIS,SJIS
+USER>
+```
+
+例文1：第1引数の文字列をUTF-8として入力したい場合
+```
+set utf8moji=$ZCONVERT(＜元の文字列＞,"I","UTF8")
+```
+
+例文2：第1引数の文字列をSJISとして出力したい場合
+```
+set sjismoji=$ZCONVERT(＜元の文字列＞,"O","SJIS")
+```
+
+
+
 ## - 文字を右寄せしたい
 
 [$JUSTIFY()関数](https://docs.intersystems.com/irisforhealthlatest/csp/docbookj/DocBook.UI.Page.cls?KEY=RCOS_fjustify)を使用します。
