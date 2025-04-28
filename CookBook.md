@@ -531,14 +531,25 @@ USER>write $ZCONVERT("コンテナ版irisのコンテナにrootユーザでロ�
 
 [$ZCONVERT()関数：3 つの引数形式 ： エンコード変換](https://docs.intersystems.com/irisforhealth20241/csp/docbookj/DocBook.UI.Page.cls?KEY=RCOS_fzconvert#RCOS_fzconvert_io)を利用します。
 
-入力データに対しての変換も出力データに対する変換も第2引数を使用することで指定できます。
+InterSystems 製品は、データを内部的に Unicode で保持しています。
 
-- 第1引数の文字列を指定エンコードで入力したい場合は、第2引数に "I" を指定します。
-- 第1引数の文字列を指定エンコードに出力したい場合は、第2引数に "O" を指定します。
+InterSystems 製品に対する入出力時のデフォルトエンコードについては、インストールする OS に合わせて決定しています。
 
-どの文字コードに変換したいかについては、第3引数に InterSystems 製品の文字コード用文字列で指定します。
+詳細は、管理ポータル > システム管理 > 構成 > 国際言語設定 > 構成したデフォルト値 で確認できます。
 
-指定できるコード一覧は、以下の方法で確認できます。
+個々のデータをデフォルトエンコードではない文字コードに変換したい場合は、[$ZCONVERT()関数：3 つの引数形式 ： エンコード変換](https://docs.intersystems.com/irisforhealth20241/csp/docbookj/DocBook.UI.Page.cls?KEY=RCOS_fzconvert#RCOS_fzconvert_io)を利用して対応することができます。
+
+指定文字列が UTF8 である場合、UTF8 から Unicode に変換する場合の例文は以下の通りです（第2引数に "I" を指定します）。
+```
+set utf8moji=$ZCONVERT(＜元の文字列＞,"I","UTF8")
+```
+
+指定文字列に対して、Unicode から UTF8 に変換をかけたい場合の例文は以下の通りです（第2引数に "O" を指定します）。
+```
+set sjismoji=$ZCONVERT(＜元の文字列＞,"O","UTF8")
+```
+
+第3引数に指定する InterSystems 製品の文字コードとして指定できる文字列一覧については、以下の方法で確認できます。
 
 ```
 USER>set nlsoref=##class(%SYS.NLS.Locale).%New()
@@ -546,16 +557,6 @@ USER>set nlsoref=##class(%SYS.NLS.Locale).%New()
 USER>write $LISTTOSTRING(nlsoref.XLTTables,",")
 Unicode,RAW,BIN,SAME,UTF8,UnicodeLittle,UnicodeBig,URL,JS,JSML,JSON,JSONML,HTML,XML,XMLA,XMLC,EBCDIC,EUC,JIS,JIS2004,NECJIS,SJIS
 USER>
-```
-
-例文1：第1引数の文字列をUTF-8として入力したい場合
-```
-set utf8moji=$ZCONVERT(＜元の文字列＞,"I","UTF8")
-```
-
-例文2：第1引数の文字列をSJISとして出力したい場合
-```
-set sjismoji=$ZCONVERT(＜元の文字列＞,"O","SJIS")
 ```
 
 
